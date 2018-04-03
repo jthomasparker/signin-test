@@ -18,17 +18,24 @@
   };
   firebase.initializeApp(config);
   var db = firebase.database();
+  var currentUser;
  // var user = firebase.auth().currentUser;
  firebase.auth().onAuthStateChanged(function(user) {
-     var userFavorites = db.ref('/users/' + user.uid + 'favorites').val();
-     var userFaves = db.ref('/users/' + user.uid).val()
+     
+     currentUser = user.uid;
     if(user){
-      console.log(user.displayName, userFavorites, "this is working", userFaves)
+      console.log(user.displayName + " is signed in")
   } else {
       console.log("not signed in")
 
   }
 });
+
+firebase.ref('/users/' + currentUser).on("value", function(snapshot){
+    var snapshotval = snapshot.val();
+    var faves = snapshotval.favorites;
+    console.log("snapshot data ", snapshotval, faves)
+})
   
   </script>
 <body>
