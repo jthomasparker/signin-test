@@ -28,6 +28,12 @@
  // var ref = db.ref(");
  var currentUid = null;  
  firebase.auth().onAuthStateChanged(function(user) {  
+    currentUid = user.uid;  
+   db.ref("/users/" + currentUid)
+   ref.set({name: user.displayName,
+            favorites: favorites,
+            test: "test2"})
+    
   // onAuthStateChanged listener triggers every time the user ID token changes.  
   // This could happen when a new user signs in or signs out.  
   // It could also happen when the current user ID token expires and is refreshed.  
@@ -36,7 +42,7 @@
    // Otherwise ignore if this is a token refresh.  
    // Update the current user UID.  
    currentUid = user.uid;
-   var ref =   db.ref("/users/" + currentUid)
+  
    
    ref.set({name: user.displayName,
             favorites: favorites,
@@ -49,11 +55,7 @@
   }  
   
 
- currentUid = user.uid;  
-   db.ref("/users/" + currentUid)
-   ref.set({name: user.displayName,
-            favorites: favorites,
-            test: "test2"})
+
 
              });
  </script>  
