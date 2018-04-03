@@ -37,10 +37,10 @@
       db.ref('/users/' + currentUser).once("value", function(snapshot){
     var snapshotval = snapshot.val();
  favoritesArr = snapshotval.favorites;
-    console.log("snapshot data ", snapshotval, favoritesArr, currentUser)
+    console.log("snapshot data ", snapshotval, favoritesArr, currentUser, "2")
 })
   } else {
-      console.log("not signed in")
+      console.log("not signed in", "3")
 
   }
 
@@ -70,8 +70,8 @@
                               <button type="button" class="close" data-dismiss="modal">&times;</button>
                               <h4 class="modal-title">Sign In to Save Favorites!</h4>
                             </div>
-                            <div class="modal-body">
-                                    <div id="firebaseui-auth-container"></div>
+                            <div class="modal-body" id="firebaseui-auth-container">
+                                 <!--   <div id="firebaseui-auth-container"></div> -->
                                             <script type="text/javascript">  
                                                 var uiConfig = {  
                                                  signInSuccessUrl: 'loggedIn.html',  
