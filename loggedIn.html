@@ -28,6 +28,12 @@
  // var ref = db.ref(");
  var currentUid = null;  
  firebase.auth().onAuthStateChanged(function(user) {  
+    if(user){
+      console.log(user.displayName, user.favorites.val(), "this is working")
+  } else {
+      console.log("not signed in")
+
+  }
     currentUid = user.uid;  
    var ref = db.ref("/users/" + currentUid)
    ref.set({name: user.displayName,
