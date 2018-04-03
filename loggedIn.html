@@ -35,8 +35,9 @@
    // Update the UI when a new user signs in.  
    // Otherwise ignore if this is a token refresh.  
    // Update the current user UID.  
-   currentUid = user.uid;  
-   db.ref("/users/" + currentUid)
+   currentUid = user.uid;
+   var ref =   db.ref("/users/" + currentUid)
+   
    ref.set({name: user.displayName,
             favorites: favorites,
             test: "test1"})
@@ -46,13 +47,15 @@
    currentUid = null;  
    console.log("no user signed in");  
   }  
- });  
+  
 
  currentUid = user.uid;  
    db.ref("/users/" + currentUid)
    ref.set({name: user.displayName,
             favorites: favorites,
             test: "test2"})
+
+             });
  </script>  
  <h1>Congrats you're done! Now get back to what you love building.</h1>  
  </html>
