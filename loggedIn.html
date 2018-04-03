@@ -29,7 +29,7 @@
  var currentUid = null;  
  firebase.auth().onAuthStateChanged(function(user) {  
     if(user){
-      console.log(user.displayName, user.favorites.val(), "this is working")
+      console.log(user.displayName, "this is working")
   } else {
       console.log("not signed in")
 
