@@ -24,7 +24,7 @@
      
      currentUser = user.uid;
     if(user){
-      console.log(user.displayName + " is signed in")
+      console.log(user.displayName + " is signed in as " + currentUser)
   } else {
       console.log("not signed in")
 
@@ -33,7 +33,7 @@
 
 db.ref('/users/' + currentUser).on("value", function(snapshot){
     var snapshotval = snapshot.val();
-    var faves = snapshotval.favorites;
+   // var faves = snapshotval.favorites;
     console.log("snapshot data ", snapshotval, faves)
 })
   
