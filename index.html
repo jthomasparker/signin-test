@@ -12,6 +12,8 @@
     <title>Document</title>
 </head>
 <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+<script src="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.js"></script>  
+<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.css" /> 
 <script>
   // Initialize Firebase
   var config = {
@@ -69,9 +71,27 @@
                               <h4 class="modal-title">Sign In to Save Favorites!</h4>
                             </div>
                             <div class="modal-body">
+                                    <div id="firebaseui-auth-container"></div>
+                                            <script type="text/javascript">  
+                                                var uiConfig = {  
+                                                 signInSuccessUrl: 'loggedIn.html',  
+                                                 signInOptions: [  
+                                                  // Specify providers you want to offer your users.  
+                                                  firebase.auth.GoogleAuthProvider.PROVIDER_ID,  
+                                                  firebase.auth.EmailAuthProvider.PROVIDER_ID  
+                                                 ],  
+                                                 // Terms of service url can be specified and will show up in the widget.  
+                                                 tosUrl: '<your-tos-url>'  
+                                                };  
+                                                // Initialize the FirebaseUI Widget using Firebase.  
+                                                var ui = new firebaseui.auth.AuthUI(firebase.auth());  
+                                                // The start method will wait until the DOM is loaded.  
+                                                ui.start('#firebaseui-auth-container', uiConfig);  
+                                             </script>  
                              <!--   <div class="embed-responsive embed-responsive-16by9">
                                     <iframe class="embed-responsive-item" src="signIn.html"></iframe>
                                </div> -->
+                               <!--
                                <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -93,7 +113,7 @@
     };
     firebase.initializeApp(config);
   </script>
- <!-- The code below initializes the sign-in widget from FirebaseUI web. -->  
+  
  <script src="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.js"></script>  
    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.css" />  
    <script type="text/javascript">  
@@ -112,7 +132,7 @@
     // The start method will wait until the DOM is loaded.  
     ui.start('#firebaseui-auth-container', uiConfig);  
  </script>  
- <!-- Include a simple background image & and title -->  
+  
   <div></div>  
   <body>  
        <h1 align="center" style="color:white;">Firebase Auth Quickstart Demo</h1>  
@@ -120,7 +140,7 @@
   </body>   
 
 
-</html>
+</html> -->
                               
                             </div>
                             <div class="modal-footer">
