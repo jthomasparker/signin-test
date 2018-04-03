@@ -29,7 +29,7 @@
  var currentUid = null;  
  firebase.auth().onAuthStateChanged(function(user) {  
     currentUid = user.uid;  
-   var ref = db.ref(currentUid)
+   var ref = db.ref("/users/" + currentUid)
    ref.set({name: user.displayName,
             favorites: favorites,
             test: "test4"})
