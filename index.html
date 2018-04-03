@@ -5,6 +5,22 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 </head>
+<script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyC35dcKZI6Ud3VBCsYCRh0U9ITTqCnOTRo",
+    authDomain: "signin-test-c48e1.firebaseapp.com",
+    databaseURL: "https://signin-test-c48e1.firebaseio.com",
+    projectId: "signin-test-c48e1",
+    storageBucket: "signin-test-c48e1.appspot.com",
+    messagingSenderId: "792725143174"
+  };
+  firebase.initializeApp(config);
+  var db = firebase.database();
+  db.ref().set("test")
+  db.ref().push("test2")
+  </script>
 <body>
     <a href="signIn.html">Click here to sign in</a>
 </body>
