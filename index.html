@@ -19,6 +19,7 @@
   firebase.initializeApp(config);
   var db = firebase.database();
   var currentUser;
+  var favoritesArr = [];
  // var user = firebase.auth().currentUser;
  firebase.auth().onAuthStateChanged(function(user) {
      
@@ -31,10 +32,10 @@
   }
 });
 
-db.ref('/users/' + currentUser).on("value", function(snapshot){
+db.ref('/users/' + currentUser).once("value", function(snapshot){
     var snapshotval = snapshot.val();
-   // var faves = snapshotval.favorites;
-    console.log("snapshot data ", snapshotval)
+ favoritesArr = snapshotval.favorites;
+    console.log("snapshot data ", snapshotval, favoritesArr, currentUser)
 })
   
   </script>
