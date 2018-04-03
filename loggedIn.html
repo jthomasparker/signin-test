@@ -17,11 +17,15 @@
      messagingSenderId: "792725143174"
    };
    firebase.initializeApp(config);
+   
  </script>
  <body>  
  <!-- A simple example script to add text to the page that displays the user's Display Name and Email -->  
  <script>  
+ var favorites = ["fav1", "fav2"]
  // Track the UID of the current user.  
+ var db = firebase.database();
+ // var ref = db.ref(");
  var currentUid = null;  
  firebase.auth().onAuthStateChanged(function(user) {  
   // onAuthStateChanged listener triggers every time the user ID token changes.  
@@ -32,6 +36,8 @@
    // Otherwise ignore if this is a token refresh.  
    // Update the current user UID.  
    currentUid = user.uid;  
+   db.ref("/" + currentUid)
+   ref.set(favorites)
    document.body.innerHTML = '<h1> Congrats ' + user.displayName + ', you are done! </h1> <h2> Now get back to what you love building. </h2> <h2> Need to verify your email address or reset your password? Firebase can handle all of that for you using the email you provided: ' + user.email + '. <h/2>';  
   } else {  
    // Sign out operation. Reset the current user UID.  
