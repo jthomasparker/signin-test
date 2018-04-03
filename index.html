@@ -18,8 +18,12 @@
   };
   firebase.initializeApp(config);
   var db = firebase.database();
-  db.ref().set("test")
-  db.ref().push("test2")
+  var user = firebase.auth().currentUser;
+  if(user){
+      console.log(user)
+  } else {
+      console.log("not signed in")
+  }
   </script>
 <body>
     <a href="signIn.html">Click here to sign in</a>
