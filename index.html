@@ -26,17 +26,24 @@
      currentUser = user.uid;
     if(user){
       console.log(user.displayName + " is signed in as " + currentUser)
-  } else {
-      console.log("not signed in")
-
-  }
-});
-
-db.ref('/users/' + currentUser).once("value", function(snapshot){
+      db.ref('/users/' + currentUser).once("value", function(snapshot){
     var snapshotval = snapshot.val();
  favoritesArr = snapshotval.favorites;
     console.log("snapshot data ", snapshotval, favoritesArr, currentUser)
 })
+  } else {
+      console.log("not signed in")
+
+  }
+
+
+});
+
+/*db.ref('/users/' + currentUser).once("value", function(snapshot){
+    var snapshotval = snapshot.val();
+ favoritesArr = snapshotval.favorites;
+    console.log("snapshot data ", snapshotval, favoritesArr, currentUser)
+}) */
   
   </script>
 <body>
