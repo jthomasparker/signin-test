@@ -31,7 +31,7 @@
   }
 });
 
-firebase.ref('/users/' + currentUser).on("value", function(snapshot){
+db.ref('/users/' + currentUser).on("value", function(snapshot){
     var snapshotval = snapshot.val();
     var faves = snapshotval.favorites;
     console.log("snapshot data ", snapshotval, faves)

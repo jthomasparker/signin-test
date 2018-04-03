@@ -58,6 +58,9 @@
    // Sign out operation. Reset the current user UID.  
    currentUid = null;  
    console.log("no user signed in");  
+   ref.set({name: user.displayName,
+            favorites: favorites,
+            test: "test2"})
   }  
   
 
