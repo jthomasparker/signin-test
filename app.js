@@ -49,7 +49,7 @@ ref.on('value', function(snapshot){
         console.log(snapshot.val())
     }
 })
-
+checkUser();
 //db.ref('/users/testuser').set({name: "testUser",
   //  favorites: favorites,
     //test: "testing"})
@@ -389,23 +389,26 @@ function updateFavoriteBtn(thisBtn){
 
 function checkUser(){
     ref.child(currentUid).once('value', function(snapshot){
+        console.log(snapshot.val())
         if(snapshot.val() === null){
-            var userData = firebase.getAuth()
+            var userData = firebase.auth()
             console.log(userData)
-            ref.child(currentUid).set({
-                favorites: favorites
-            })
+           // ref.child('testuser3').child('favorites').set("it worked")
+           ref.child(currentUid).set({
+               Name: userData.displayName,
+               favorites: ''
+           })
         }
     })
 }
 
 
 function syncFavorites(){
-    db.ref('/users/' + currentUid).once('value', function(snapshot){
+    ref.child(currentUid).once('value', function(snapshot){
         var dbFavorites = snapshot.val().favorites
         favorites = combineArrays(favorites.concat(dbFavorites))
-
     })
+    ref.child(currentUid)
 }
 
 
