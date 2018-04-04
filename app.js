@@ -58,10 +58,7 @@ firebase.auth().onAuthStateChanged(function(user) {
        signedIn = true;
        currentUid = user.uid;
        console.log(user.displayName + " is signed in as " + currentUid)
-       var exists = checkFirstTimeUser();
-       if(exists){
-       syncFavorites();
-       }
+       checkFirstTimeUser();
      
    } else {
        signedIn = false;
@@ -418,8 +415,9 @@ function checkFirstTimeUser(){
            })
            
         }
+        syncFavorites();
     })
-    return true;
+    
 }
 
 
@@ -428,7 +426,10 @@ function syncFavorites(){
         var dbFavorites = snapshot.val().favorites
         favorites = combineArrays(favorites.concat(dbFavorites))
     })
-    ref.child(currentUid).child('favorites').set(favorites)
+    
+    if(favorites.length > 0){
+        ref.child(currentUid).child('favorites').set(favorites)
+    }
 }
 
 
