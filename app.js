@@ -59,6 +59,7 @@ firebase.auth().onAuthStateChanged(function(user) {
    if(user){
        signedIn = true;
        currentUid = user.uid;
+       checkUser();
        syncFavorites();
      console.log(user.displayName + " is signed in as " + currentUid)
    } else {
@@ -387,46 +388,27 @@ function updateFavoriteBtn(thisBtn){
 
 
 function checkUser(){
-    firebase.auth().onAuthStateChanged(function(user) {
-        currentUser = user.uid;
-       if(user){
-        
-           signedIn = true;
-         console.log(user.displayName + " is signed in as " + currentUser)
-         db.ref("/users/" + currentUser).once("value", function(snapshot){
-       var snapshotval = snapshot.val();
-         dbFavorites = snapshotval.favorites;
-      //   favorites = combineArrays(localFavorites.concat(dbFavorites))
-      favorites = combineArrays(favorites.concat(dbFavorites))
-       console.log("snapshot data ", snapshotval, dbFavorites, currentUser)
-       $('#signin').empty();
-   })
-     } else {
-         console.log("not signed in")
-         signedIn = false;
-        if(!signinRefused){
-         $('#myModal').modal();
-        } else {
-            addSignInButton();
-        }
-     }
-   });
-}
-
-
-function syncFavorites(){
-    db.ref('/users/' + currentUid).once('value', function(snapshot){
-        if(snapshot.val().favorites){
-        var dbFavorites = snapshot.val().favorites
-        favorites = combineArrays(favorites.concat(dbFavorites))
-        } else {
-            db.ref('/users/' + currentUid).set({
-                name: firebase.auth().currentUid.displayName,
+    ref.child(currentUid).once('value', function(snapshot){
+        if(snapshot.val() === null){
+            var userData = firebase.getAuth()
+            console.log(userData)
+            ref.child(currentUid).set({
                 favorites: favorites
             })
         }
     })
 }
+
+
+function syncFavorites(){
+    db.ref('/users/' + currentUid).once('value', function(snapshot){
+        var dbFavorites = snapshot.val().favorites
+        favorites = combineArrays(favorites.concat(dbFavorites))
+
+    })
+}
+
+
 
 
 function combineArrays(array){
