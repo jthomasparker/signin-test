@@ -50,7 +50,7 @@ ref.on('value', function(snapshot){
     }
 })
 
-
+//checkUser();
 firebase.auth().onAuthStateChanged(function(user) {
     
    if(user){
@@ -58,7 +58,7 @@ firebase.auth().onAuthStateChanged(function(user) {
        currentUid = user.uid;
        console.log(user.displayName + " is signed in as " + currentUid)
        checkUser();
-       syncFavorites();
+      // syncFavorites();
      
    } else {
        signedIn = false;
@@ -387,9 +387,9 @@ function updateFavoriteBtn(thisBtn){
 
 
 function checkUser(){
-    console.log(currentUid)
+    
     ref.child(currentUid).once('value', function(snapshot){
-        
+        console.log(currentUid)
         if(snapshot.val() === null){
             var userData = firebase.auth()
             console.log(userData)
@@ -398,8 +398,9 @@ function checkUser(){
                Name: userData.displayName,
                favorites: ''
            })
-        }
+        } 
     })
+    syncFavorites();
 }
 
 
