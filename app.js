@@ -391,11 +391,11 @@ function checkUser(){
     ref.child(currentUid).once('value', function(snapshot){
         console.log(currentUid)
         if(snapshot.val() === null){
-            var userData = firebase.auth()
+            var userData = firebase.auth().currentUser;
             console.log(userData)
            // ref.child('testuser3').child('favorites').set("it worked")
            ref.child(currentUid).set({
-               Name: userData.displayName,
+             //  Name: userData.displayName,
                favorites: ''
            })
         } 
