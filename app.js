@@ -416,8 +416,15 @@ function checkUser(){
 
 function syncFavorites(){
     db.ref('/users/' + currentUid).once('value', function(snapshot){
+        if(snapshot.val().favorites){
         var dbFavorites = snapshot.val().favorites
         favorites = combineArrays(favorites.concat(dbFavorites))
+        } else {
+            db.ref('/users/' + currentUid).set({
+                name: firebase.auth().currentUid.displayName,
+                favorites: favorites
+            })
+        }
     })
 }
 
