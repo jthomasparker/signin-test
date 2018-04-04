@@ -12,11 +12,10 @@ var eventBriteurl = 'https://www.eventbriteapi.com/v3/events/search/?token=H3LGM
 var sgQ = "";
 var page = 1;
 var sgPerformer = "";
-var localFavorites = [];
-var dbFavorites = []; 
+//var localFavorites = [];
+//var dbFavorites = []; 
 var favorites = [];
 var displayFavorites = false;
-var favoriteCount;
 /*var config = {
     apiKey: "AIzaSyC35dcKZI6Ud3VBCsYCRh0U9ITTqCnOTRo",
     authDomain: "signin-test-c48e1.firebaseapp.com",
@@ -43,14 +42,14 @@ var signinRefused = false;
 
 
 $(document).ready(function(){
-   // console.log(firebase.auth().currentUser.uid)
+signedIn = checkUserStatus()
 ref.on('value', function(snapshot){
     if(signedIn){
         console.log(snapshot.val())
     }
 })
 
-signedIn = checkUserStatus()
+
 
 //checkUser();
 firebase.auth().onAuthStateChanged(function(user) {
@@ -59,8 +58,10 @@ firebase.auth().onAuthStateChanged(function(user) {
        signedIn = true;
        currentUid = user.uid;
        console.log(user.displayName + " is signed in as " + currentUid)
-       checkFirstTimeUser();
-      // syncFavorites();
+       var exists = checkFirstTimeUser();
+       if(exists){
+       syncFavorites();
+       }
      
    } else {
        signedIn = false;
@@ -415,9 +416,10 @@ function checkFirstTimeUser(){
                providerUid: userData.providerData[0].uid,
                favorites: ''
            })
-        } 
+           
+        }
     })
-    
+    return true;
 }
 
 
