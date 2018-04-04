@@ -46,7 +46,7 @@ $(document).ready(function(){
    // console.log(firebase.auth().currentUser.uid)
 ref.on('value', function(snapshot){
     if(signedIn){
-        console.log(snapshot.val().currentUid)
+        console.log(snapshot.val())
     }
 })
 
@@ -59,6 +59,7 @@ firebase.auth().onAuthStateChanged(function(user) {
    if(user){
        signedIn = true;
        currentUid = user.uid;
+       syncFavorites();
      console.log(user.displayName + " is signed in as " + currentUid)
    } else {
        signedIn = false;
@@ -410,6 +411,14 @@ function checkUser(){
         }
      }
    });
+}
+
+
+function syncFavorites(){
+    db.ref('/users/' + currentUid).once('value', function(snapshot){
+        var dbFavorites = snapshot.val().favorites
+        favorites = combineArrays(favorites.concat(dbFavorites))
+    })
 }
 
 
