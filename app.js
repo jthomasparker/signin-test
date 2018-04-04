@@ -84,22 +84,22 @@ firebase.auth().onAuthStateChanged(function(user) {
 
     $('#btnSearch').on('click', function(){
         if(!displayFavorites){
-      var  searchInput = $('#search')
+            var  searchInput = $('#search')
       // sgPerformer = searchInput.val();
-        sgQ = searchInput.val();
-        querySeatGeek();
+            sgQ = searchInput.val();
+            querySeatGeek();
      //   searchInput.val('')
       //  resetVariables();
-        }
+            }
     })
 
     $('#navFavorites').on('click', function(){
         displayFavorites = true;
         
-        if(!signedIn){
+        if((!signedIn)&&(!signinRefused)){
             $('#myModal').modal();
-             } 
-      //  checkUser()
+        }
+      
         $('#navFavorites').addClass("active")
         $('#navHome').removeClass("active")
         $('#results').empty();
@@ -122,11 +122,9 @@ firebase.auth().onAuthStateChanged(function(user) {
     $('body').on('click', '.btnFavorite', function(){
         var thisBtn = $(this)
         var eventId = $(this).attr("event-id")
-        /* this will be replaced by checkUser();
-        if(!signedIn){
+        if((!signedIn)&&(!signinRefused)){
             $('#myModal').modal();
-        } */
-        // checkUser();
+        }
         if(favorites.indexOf(eventId) < 0){
             favorites.push(eventId)
         } else {
@@ -140,7 +138,8 @@ firebase.auth().onAuthStateChanged(function(user) {
             $('#results').empty();
             }
         }
-        updateFavoriteBtn(thisBtn)  
+        updateFavoriteBtn(thisBtn)
+        syncFavorites();
     })
 
     $('#cancel').on('click', function(){
@@ -174,7 +173,9 @@ function querySeatGeek(){
         });
 } else {
     url += '&' + $.param({
-        'id': favorites
+        'id': favorites,
+        'client_id': sgId,
+        'client_secret': sgKey
     })
 }
     console.log(url)
@@ -426,7 +427,7 @@ function syncFavorites(){
         var dbFavorites = snapshot.val().favorites
         favorites = combineArrays(favorites.concat(dbFavorites))
     })
-    
+
     if(favorites.length > 0){
         ref.child(currentUid).child('favorites').set(favorites)
     }
