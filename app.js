@@ -50,18 +50,16 @@ ref.on('value', function(snapshot){
     }
 })
 
-//db.ref('/users/testuser').set({name: "testUser",
-  //  favorites: favorites,
-    //test: "testing"})
 
 firebase.auth().onAuthStateChanged(function(user) {
     
    if(user){
        signedIn = true;
        currentUid = user.uid;
+       console.log(user.displayName + " is signed in as " + currentUid)
        checkUser();
        syncFavorites();
-     console.log(user.displayName + " is signed in as " + currentUid)
+     
    } else {
        signedIn = false;
        currentUid = null;
