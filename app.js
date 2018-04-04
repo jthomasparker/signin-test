@@ -387,8 +387,9 @@ function updateFavoriteBtn(thisBtn){
 
 
 function checkUser(){
+    console.log(currentUid)
     ref.child(currentUid).once('value', function(snapshot){
-        console.log(snapshot.val())
+        
         if(snapshot.val() === null){
             var userData = firebase.auth()
             console.log(userData)
