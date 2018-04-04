@@ -49,7 +49,7 @@ ref.on('value', function(snapshot){
         console.log(snapshot.val())
     }
 })
-checkUser();
+
 //db.ref('/users/testuser').set({name: "testUser",
   //  favorites: favorites,
     //test: "testing"})
@@ -64,6 +64,7 @@ firebase.auth().onAuthStateChanged(function(user) {
      console.log(user.displayName + " is signed in as " + currentUid)
    } else {
        signedIn = false;
+       currentUid = null;
        console.log(signedIn)
    }
 })
@@ -408,7 +409,7 @@ function syncFavorites(){
         var dbFavorites = snapshot.val().favorites
         favorites = combineArrays(favorites.concat(dbFavorites))
     })
-    ref.child(currentUid)
+    ref.child(currentUid).child('favorites').set(favorites)
 }
 
 
