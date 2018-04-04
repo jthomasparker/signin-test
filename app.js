@@ -50,6 +50,8 @@ ref.on('value', function(snapshot){
     }
 })
 
+signedIn = checkUserStatus()
+
 //checkUser();
 firebase.auth().onAuthStateChanged(function(user) {
     
@@ -57,7 +59,7 @@ firebase.auth().onAuthStateChanged(function(user) {
        signedIn = true;
        currentUid = user.uid;
        console.log(user.displayName + " is signed in as " + currentUid)
-       checkUser();
+       checkFirstTimeUser();
       // syncFavorites();
      
    } else {
@@ -385,8 +387,18 @@ function updateFavoriteBtn(thisBtn){
         $(thisBtn).append(favStar)
 }
 
+function checkUserStatus(){
+    var user = firebase.auth().currentUser;
+    if(user){
+        currentUid = user.uid;
+        return true;
+    } else {
+        return false;
+    }
+}
 
-function checkUser(){
+
+function checkFirstTimeUser(){
     
     ref.child(currentUid).once('value', function(snapshot){
         console.log(currentUid)
@@ -395,12 +407,17 @@ function checkUser(){
             console.log(userData)
            // ref.child('testuser3').child('favorites').set("it worked")
            ref.child(currentUid).set({
-             //  Name: userData.displayName,
+               name: userData.displayName,
+               email: userData.email,
+               emailverified: userData.emailVerified,
+               photoUrl: userData.photoURL,
+               providerId: userData.providerData[0].providerId,
+               providerUid: userData.providerData[0].uid,
                favorites: ''
            })
         } 
     })
-    syncFavorites();
+    
 }
 
 
