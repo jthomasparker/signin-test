@@ -17,7 +17,6 @@ var lon = 0;
 var lat = 0;
 var favorites = [];
 var displayFavorites = false;
-var venueZip;
 var config = {
     apiKey: "AIzaSyC7rTCfLMZJrv9vy53vXZhJenvje0qwRQU",
     authDomain: "concert-cloud.firebaseapp.com",
@@ -50,17 +49,17 @@ ref.on('value', function(snapshot){
 firebase.auth().onAuthStateChanged(function(user) {
     
    if(user){
-       signedIn = true;
-       currentUid = user.uid;
-       console.log(user.displayName + " is signed in as " + currentUid)
-      // checkFirstTimeUser();
-      updateUser();
-      toggleDisplay();
+        signedIn = true;
+        currentUid = user.uid;
+        console.log(user.displayName + " is signed in as " + currentUid)
+        updateUser();
+        toggleDisplay();
      
    } else {
        signedIn = false;
        signinRefused = false;
        currentUid = null;
+       resetVariables();
        console.log(signedIn)
    }
    updateLoginBtn();
@@ -118,7 +117,6 @@ firebase.auth().onAuthStateChanged(function(user) {
 
     $('#btnLogin').on('click', function(){
         if(signedIn){
-           // syncFavorites();
             firebase.auth().signOut();
         } else {
             $('#loginModal').modal();
@@ -177,7 +175,7 @@ function resetVariables(){
 function querySeatGeek(){
     $('#results').empty();
 
-    var searchUrl = getUrl('sg')
+    var searchUrl = getUrl('sgEventSearch')
         console.log(searchUrl)
     
     callApi(searchUrl).done(function(response){
@@ -296,30 +294,7 @@ function querySeatGeek(){
 };
 
 
-/*
-function getForecast(results, dateTime){
-    for(var i = 0; i < results.length; i++){
-        var forecastStartTime = moment(results[i].dt_txt);
-        var forecastEndTime;
-            if(i + 1 < results.length){
-                forecastEndTime = moment(results[i + 1].dt_txt);
-            } else {
-                forecastEndTime = moment(results[i].dt_txt);
-            }
-        
-        if((moment(dateTime).isBetween(forecastStartTime, forecastEndTime, 'minute', [])) || (moment(dateTime).isSame(forecastStartTime, forecastEndTime, 'minute'))) {
-            var lowTemp = Math.round(results[i].main.temp_min);
-            var highTemp = Math.round(results[i].main.temp_max);
-            var humidity = results[i].main.humidity;
-            var rain = results[i].rain;
-            var forecast = results[i].weather[0].description;
-            var weather = $("<div>").html('<h4>Forecast</h4>' + 'Temp: ' + lowTemp + ' - ' + highTemp + '&#176 (F)<br>' + forecast);
-            console.log(venueZip, dateTime, weather)
-        return weather;
-        }
-    }
-}
-*/
+
 
 // searches youtube for a video with the performer, output it to videoDiv
 function queryYoutube(videoDiv){
@@ -345,6 +320,8 @@ function queryYoutube(videoDiv){
 };
 
 
+
+// gets the weather forecast for a zip code and dateTime, appends the whenDiv
 function queryWeather(whenDiv, venueZip, dateTime){
     // get the url
     var url = getUrl('weather');
@@ -377,7 +354,7 @@ function queryWeather(whenDiv, venueZip, dateTime){
 }
 
 
-
+// updates the favorite (star) button
 function updateFavoriteBtn(thisBtn){
     // start with an empty button
     thisBtn.empty();
@@ -409,8 +386,11 @@ function checkUserStatus(){
 
 
 
+// syncs the currentUser with the db, creates a user if it doesn't already exist
 function updateUser(){
+    // get the current user's data
     var userData = firebase.auth().currentUser;
+    // update the db with the user data (except favorites)
     ref.child(currentUid).update({
         name: userData.displayName,
         email: userData.email,
@@ -419,12 +399,15 @@ function updateUser(){
         providerId: userData.providerData[0].providerId,
         providerUid: userData.providerData[0].uid,
     }).then(function(){
+        // retrieve the newly updated user to see if they had any favorites stored
         ref.child(currentUid).once('value', function(snapshot){
             userPhoto = snapshot.val().photoUrl
+            // if the user had favorites stored, combine the local favorites array with the db favorites
             if(snapshot.val().favorites){
                 var dbFavorites = snapshot.val().favorites;
                 favorites = combineArrays(favorites.concat(dbFavorites));
             };
+            // update the db favorites with the favorites array
             ref.child(currentUid).update({favorites: favorites});
         });
     }); 
@@ -434,7 +417,7 @@ function updateUser(){
 
 
 
-
+// combines 2 arrays and removes duplicates
 function combineArrays(array){
     var arr = array.concat();
     for(var i = 0; i < arr.length; i++){
@@ -451,6 +434,8 @@ function combineArrays(array){
 }
 
 
+
+// updates the "login/out" button based on user status
 function updateLoginBtn(){
     if(signedIn){
         $('#btnLogin').html("Sign Out")
@@ -463,6 +448,8 @@ function updateLoginBtn(){
 }
 
 
+
+// toggles the page between displaying favorites or home
 function toggleDisplay(){
     if(displayFavorites){
         $('#navFavorites').addClass("active");

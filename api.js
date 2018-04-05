@@ -12,7 +12,7 @@ function callApi(apiURL){
 
 function getUrl(api){
     switch (api){
-        case 'sg':
+        case 'sgEventSearch':
             var url = 'https://api.seatgeek.com/2/events?taxonomies.name=' + eventType;
             url += '&' + $.param({
                 'per_page': 10,
@@ -28,7 +28,7 @@ function getUrl(api){
                     'performers.slug': sgPerformer,
                     'lat': lat,
                     'lon': lon,
-                     'geoip': true,
+                    // 'geoip': true,
                     // 'range': '200mi'
                     });
                 } else {
