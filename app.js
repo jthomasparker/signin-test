@@ -65,6 +65,7 @@ firebase.auth().onAuthStateChanged(function(user) {
        currentUid = null;
        console.log(signedIn)
    }
+   updateLoginBtn();
 })
 
     // click event for performer button - loads youtube video
@@ -97,7 +98,7 @@ firebase.auth().onAuthStateChanged(function(user) {
         displayFavorites = true;
         
         if((!signedIn)&&(!signinRefused)){
-            $('#myModal').modal();
+            $('#loginModal').modal();
         }
       
         $('#navFavorites').addClass("active")
@@ -119,11 +120,22 @@ firebase.auth().onAuthStateChanged(function(user) {
         }
     })
 
+    $('#btnLogin').on('click', function(){
+        if(signedIn){
+            syncFavorites();
+            firebase.auth().signOut();
+        } else {
+            $('#loginModal').modal();
+        }
+        
+        updateLoginBtn();
+    })
+
     $('body').on('click', '.btnFavorite', function(){
         var thisBtn = $(this)
         var eventId = $(this).attr("event-id")
         if((!signedIn)&&(!signinRefused)){
-            $('#myModal').modal();
+            $('#loginModal').modal();
         }
         if(favorites.indexOf(eventId) < 0){
             favorites.push(eventId)
@@ -173,6 +185,8 @@ function querySeatGeek(){
         });
 } else {
     url += '&' + $.param({
+        'per_page': 10,
+        'page': page,
         'id': favorites,
         'client_id': sgId,
         'client_secret': sgKey
@@ -449,10 +463,12 @@ function combineArrays(array){
 }
 
 
-function addSignInButton(){
-    var signinBtn = $('<button class="btn btn-default">')
-    $('#signin').append(signinBtn)
-
+function updateLoginBtn(){
+    if(signedIn){
+        $('#btnLogin').html("Sign Out")
+    } else {
+        $('#btnLogin').html("Sign In")
+    }
 }
 
 
