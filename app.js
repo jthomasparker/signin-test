@@ -440,8 +440,8 @@ function updateLoginBtn(){
     if(signedIn){
         
         var userPhoto = firebase.auth().currentUser.photoURL;
-        $('#btnLogin').html(" Sign Out ")
-        $('<img src="' + userPhoto +'" class="img-circle img-responsive" width="50" height="auto">').appendTo('#profilepic')
+        $('#btnLogin').html("Sign Out")
+        $('<img src="' + userPhoto +'" class="img-circle img-responsive" width="40" height="auto">').appendTo('#btnLogin')
         
 
     } else {
