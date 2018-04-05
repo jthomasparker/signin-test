@@ -438,9 +438,11 @@ function combineArrays(array){
 // updates the "login/out" button based on user status
 function updateLoginBtn(){
     if(signedIn){
-        $('#btnLogin').html("Sign Out")
+        
         var userPhoto = firebase.auth().currentUser.photoURL;
-        $('<img src="' + userPhoto +'" class="img-circle img-responsive" width="50" height="auto">').appendTo('#btnLogin')
+        $('#btnLogin').html("Sign Out " + '<img src="' + userPhoto +'" class="img-circle img-responsive" width="50" height="auto">')
+      //  $('<img src="' + userPhoto +'" class="img-circle img-responsive" width="50" height="auto">').appendTo('#btnLogin')
+        
 
     } else {
         $('#btnLogin').html("Sign In")
