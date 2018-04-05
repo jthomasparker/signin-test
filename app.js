@@ -80,6 +80,7 @@ firebase.auth().onAuthStateChanged(function(user) {
     })
 
     $('#btnSearch').on('click', function(){
+      //  preventDefault();
         displayFavorites = false;
         
         toggleDisplay();
@@ -171,42 +172,17 @@ function resetVariables(){
 
 // searches seatgeek api
 function querySeatGeek(){
-    $('#results').empty();
-    var url = 'https://api.seatgeek.com/2/events?taxonomies.name=' + eventType;
-    if(!displayFavorites){
-        url += '&' + $.param({
-            'per_page': 10,
-            'page': page,
-            'q': sgQ,
-            'client_id': sgId,
-            'client_secret': sgKey,
-            'performers.slug': sgPerformer,
-            'lat': lat,
-            'lon': lon,
-          // 'geoip': true,
-           // 'range': '200mi'
-        });
-} else {
-    url += '&' + $.param({
-        'per_page': 10,
-        'page': page,
-        'id': favorites,
-        'client_id': sgId,
-        'client_secret': sgKey
-    })
-}
-    console.log(url)
+  //  $('#results').empty();
 
-    $.ajax({
-        method: 'GET',
-        url: url,
-        async: true,
-        crossDomain: true,
-        headers: {}
-    }).done(function(response){
+    var url = getUrl('sg')
+        console.log(url)
+    
+    callApi(url).done(function(response){
+       
         // get the resulting events
-        var results = response.events
+        var results = response.events 
         console.log(results)
+
         // loop through the results
         for(i = 0; i < results.length; i++){
             
@@ -247,11 +223,6 @@ function querySeatGeek(){
             var videoDiv = $('<div class="video-output">');
             
                             
-
-            
-
-            
-
             // assign the event results to variables
             var eventId = results[i].id;
             var eventUrl = results[i].url;
@@ -265,28 +236,25 @@ function querySeatGeek(){
             var venueLocation = results[i].venue.location;
             var title = results[i].title;
             var date = moment(results[i].datetime_local).format("MM/DD/YYYY");
-            var dateTime = moment(results[i].datetime_local) //.format("MM-DD-YYYY HH:mm")
+            var dateTime = moment(results[i].datetime_local);
             
-            var formattedDateTime = moment(results[i].datetime_local).format("dddd, MMMM Do YYYY, [at] h:mm a")
-            var formattedAddress = venueStreet + "<br>" + venueCityandState + "<br>" + venueZip
+            var formattedDateTime = moment(results[i].datetime_local).format("dddd, MMMM Do YYYY, [at] h:mm a");
+            var formattedAddress = venueStreet + "<br>" + venueCityandState + "<br>" + venueZip;
             
             // get the performers
-            for(j = 0; j < results[i].performers.length; j++){
-                var performer = results[i].performers[j].name
-                // create a btn-link for each performer, set its text to the performer name
-                var performerBtn = $('<button class="btn btn-link performerBtn">')
-                                    .text(performer)
-                                    .attr("event-id", eventId)
-                                    .appendTo(performersDiv);
-                
-            };
+                for(j = 0; j < results[i].performers.length; j++){
+                    var performer = results[i].performers[j].name;
+                    // create a btn-link for each performer, set its text to the performer name
+                    var performerBtn = $('<button class="btn btn-link performerBtn">')
+                                        .text(performer)
+                                        .attr("event-id", eventId)
+                                        .appendTo(performersDiv);    
+                };
 
             // Set the title of the result panel
-            panelTitle.html(date + " - " + title) //.append(btnFavorite) panelHeading.append(
+            panelTitle.html(date + " - " + title);
             // append the formatted date/time to whenDiv
-            whenDiv.append(formattedDateTime)
-            // set the event-id for the button
-           // performerBtn.attr("event-id", eventId)
+            whenDiv.append(formattedDateTime);
             //TODO: get venue rating from yelp?
             // append all the venue stuff plus the whenDiv to the venue panel
             venueDiv.append(venueName, formattedAddress, whenDiv);
@@ -301,23 +269,21 @@ function querySeatGeek(){
             btnFavorite.attr({'id': 'b' + eventId,
                             'event-id': eventId})
                            
-
+            // update the star based on whether or not it has been favorited
             updateFavoriteBtn(btnFavorite)
             
 
             // get the weather if the event date is within the next 5 days (the openweather api limit)
-            var fiveDaysAway = moment().add(5, 'd') //.format("MM-DD-YYYY HH:mm");
-            if(moment(dateTime).isBetween(moment(), fiveDaysAway)){
-                queryWeather(whenDiv, venueZip, dateTime);
-            }
+            var fiveDaysAway = moment().add(5, 'd')
+                if(moment(dateTime).isBetween(moment(), fiveDaysAway)){
+                    queryWeather(whenDiv, venueZip, dateTime);
+                }
+
             // append it all to the results div
             $('#results').append(resultPanel);
-        }
-
-
-    }) 
-    
-}
+        };
+    });
+};
 
 
 // searches youtube for a video with the performer, output it to videoDiv
@@ -391,18 +357,18 @@ function queryWeather(whenDiv, venueZip, dateTime){
 
 
 function updateFavoriteBtn(thisBtn){
-    
+    // start with an empty button
     thisBtn.empty();
-    var eventId = $(thisBtn).attr("event-id")
-    var favStar = $('<span class="glyphicon">')
-   console.log(thisBtn.attr("event-id"))
+    var eventId = $(thisBtn).attr("event-id");
+    var favStar = $('<span class="glyphicon">');
     // if it's not in favorites[], empty star otherwise filled star
     if(favorites.indexOf(eventId) < 0){
         favStar.removeClass("glyphicon-star").addClass("glyphicon-star-empty");
     } else {
         favStar.removeClass("glyphicon-star-empty").addClass("glyphicon-star");
-    }
-        $(thisBtn).append(favStar)
+    };
+    // add the updated star to the button
+    $(thisBtn).append(favStar)
 }
 
 function checkUserStatus(){
@@ -414,6 +380,7 @@ function checkUserStatus(){
         return false;
     }
 }
+
 
 
 function updateUser(){
@@ -429,13 +396,13 @@ function updateUser(){
         ref.child(currentUid).once('value', function(snapshot){
             userPhoto = snapshot.val().photoUrl
             if(snapshot.val().favorites){
-                var dbFavorites = snapshot.val().favorites
-                favorites = combineArrays(favorites.concat(dbFavorites))
-            }
-            ref.child(currentUid).update({favorites: favorites})
-        })
-    })   
-}
+                var dbFavorites = snapshot.val().favorites;
+                favorites = combineArrays(favorites.concat(dbFavorites));
+            };
+            ref.child(currentUid).update({favorites: favorites});
+        });
+    }); 
+};
 
 
 
@@ -461,6 +428,7 @@ function combineArrays(array){
 function updateLoginBtn(){
     if(signedIn){
         $('#btnLogin').html("Sign Out")
+        var userPhoto = firebase.auth().currentUser.photoURL;
         $('<img src="' + userPhoto +'">').appendTo('#btnLogin')
 
     } else {
@@ -471,30 +439,35 @@ function updateLoginBtn(){
 
 function toggleDisplay(){
     if(displayFavorites){
-        $('#navFavorites').addClass("active")
-        $('#navHome').removeClass("active")
+        $('#navFavorites').addClass("active");
+        $('#navHome').removeClass("active");
         $('#results').empty();
-        if(favorites.length > 0){
-            querySeatGeek();
-        }
-        if(!signedIn){
-        var message = '<h3><center><a href="#" data-toggle="modal" data-target="#loginModal">Sign In</a> to Save Your Favorites!</center></h3>'
-        var signInPanel = $('<div class="panel panel-default">').appendTo('#signin')
-        var signInBody = $('<div class="panel-body">').html(message).appendTo(signInPanel)
-        } else {
-            $('#signin').empty();
-        }
-    } else {
-        $('#navFavorites').removeClass("active")
-        $('#navHome').addClass("active")
         $('#signin').empty();
-        if(sgQ.length === 0){
-            $('#results').empty;
-        } else{
-        querySeatGeek();
-        }
-    }
-}
+            if(favorites.length > 0){
+                querySeatGeek();
+            };
+            if(!signedIn){
+                var message = '<h3><center><a href="#" data-toggle="modal" data-target="#loginModal">Sign In</a> to Save Your Favorites!</center></h3>';
+                var signInPanel = $('<div class="panel panel-default">').appendTo('#signin');
+                var signInBody = $('<div class="panel-body">').html(message).appendTo(signInPanel);
+            };
+             
+    } else {
+        $('#navFavorites').removeClass("active");
+        $('#navHome').addClass("active");
+        $('#signin').empty();
+            if(sgQ.length === 0){
+                $('#results').empty;
+            } else{
+            querySeatGeek();
+            };
+    };
+};
+
+
+
+
+
 
 
 
