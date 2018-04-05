@@ -425,7 +425,7 @@ function checkFirstTimeUser(){
            if(favorites.length > 0){
                currentFavorites = favorites;
            }
-           ref.child(currentUid).set({
+           ref.child(currentUid).update({
                name: userData.displayName,
                email: userData.email,
                emailverified: userData.emailVerified,
@@ -438,6 +438,7 @@ function checkFirstTimeUser(){
         } else { 
             var dbFavorites = snapshot.val().favorites
             favorites = combineArrays(favorites.concat(dbFavorites))
+            ref.child(currentUid).update({favorites: favorites})
 
         }
     })
