@@ -154,7 +154,7 @@ firebase.auth().onAuthStateChanged(function(user) {
         syncFavorites();
     })
 
-    $('#cancel').on('click', function(){
+    $('.cancelLogin').on('click', function(){
         signinRefused = true;
     })
  
@@ -437,6 +437,7 @@ function checkFirstTimeUser(){
 
 
 function syncFavorites(){
+    if(signedIn){
     ref.child(currentUid).once('value', function(snapshot){
         var dbFavorites = snapshot.val().favorites
         favorites = combineArrays(favorites.concat(dbFavorites))
@@ -445,6 +446,7 @@ function syncFavorites(){
     if(favorites.length > 0){
         ref.child(currentUid).child('favorites').set(favorites)
     }
+}
 }
 
 
