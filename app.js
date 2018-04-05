@@ -458,6 +458,9 @@ function combineArrays(array){
                 arr.splice(j--, 1)
             }
         }
+        if(arr[i] === ""){
+            arr.splice(i, 1)
+        }
     }
     return arr
 }
