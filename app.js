@@ -12,20 +12,11 @@ var eventBriteurl = 'https://www.eventbriteapi.com/v3/events/search/?token=H3LGM
 var sgQ = "";
 var page = 1;
 var sgPerformer = "";
-//var localFavorites = [];
-//var dbFavorites = []; 
+var lon = 0;
+var lat = 0;
 var favorites = [];
 var displayFavorites = false;
-/*var config = {
-    apiKey: "AIzaSyC35dcKZI6Ud3VBCsYCRh0U9ITTqCnOTRo",
-    authDomain: "signin-test-c48e1.firebaseapp.com",
-    databaseURL: "https://signin-test-c48e1.firebaseio.com",
-    projectId: "signin-test-c48e1",
-    storageBucket: "signin-test-c48e1.appspot.com",
-    messagingSenderId: "792725143174"
-  };
-  firebase.initializeApp(config); */
-  var config = {
+var config = {
     apiKey: "AIzaSyC7rTCfLMZJrv9vy53vXZhJenvje0qwRQU",
     authDomain: "concert-cloud.firebaseapp.com",
     databaseURL: "https://concert-cloud.firebaseio.com",
@@ -39,6 +30,7 @@ var ref = db.ref("/users/")
 var currentUid = null;
 var signedIn = false;
 var signinRefused = false;
+var userPhoto;
 
 
 $(document).ready(function(){
@@ -58,7 +50,9 @@ firebase.auth().onAuthStateChanged(function(user) {
        signedIn = true;
        currentUid = user.uid;
        console.log(user.displayName + " is signed in as " + currentUid)
-       checkFirstTimeUser();
+      // checkFirstTimeUser();
+      updateUser();
+      toggleDisplay();
      
    } else {
        signedIn = false;
@@ -78,21 +72,29 @@ firebase.auth().onAuthStateChanged(function(user) {
         // use the event-id attr to select the videoDiv 
         var videoDiv = $('.video-output[event-id=' + eventId + ']')
         // set the youtube search to performer plus music
-        qYoutube = performer + " music"
+        qYoutube = performer + " official"
         // call youtube api with the div of where to display the video
+        console.log(eventId)
         queryYoutube(videoDiv)
         
     })
 
     $('#btnSearch').on('click', function(){
-        if(!displayFavorites){
-            var  searchInput = $('#search')
+        displayFavorites = false;
+        
+        toggleDisplay();
+        resetVariables();
+
+        var  searchInput = $('#search')
       // sgPerformer = searchInput.val();
             sgQ = searchInput.val();
             querySeatGeek();
-     //   searchInput.val('')
-      //  resetVariables();
-            }
+        $(this).blur();
+     
+    })
+
+    $('#search').on('focus', function(){
+        $(this).val('');
     })
 
     $('#navFavorites').on('click', function(){
@@ -101,24 +103,13 @@ firebase.auth().onAuthStateChanged(function(user) {
         if((!signedIn)&&(!signinRefused)){
             $('#loginModal').modal();
         }
-      
-        $('#navFavorites').addClass("active")
-        $('#navHome').removeClass("active")
-        $('#results').empty();
-        if(favorites.length > 0){
-            querySeatGeek();
-        }
+    
+        toggleDisplay();
     })
 
     $('#navHome').on('click', function(){
         displayFavorites = false;
-        $('#navFavorites').removeClass("active")
-        $('#navHome').addClass("active")
-        if(sgQ.length === 0){
-            $('#results').empty;
-        } else{
-        querySeatGeek();
-        }
+        toggleDisplay();
     })
 
     $('#btnLogin').on('click', function(){
@@ -135,6 +126,7 @@ firebase.auth().onAuthStateChanged(function(user) {
     $('body').on('click', '.btnFavorite', function(){
         var thisBtn = $(this)
         var eventId = $(this).attr("event-id")
+        
         if((!signedIn)&&(!signinRefused)){
             $('#loginModal').modal();
         }
@@ -160,14 +152,20 @@ firebase.auth().onAuthStateChanged(function(user) {
     $('.cancelLogin').on('click', function(){
         signinRefused = true;
     })
+
+    $('body').on('click', function(){
+        $(this).blur();
+    })
  
 })
 
 
 function resetVariables(){
-    sgQ = "";
-    page = 1;
-    sgPerformer = ""
+    var sgQ = "";
+    var page = 1;
+    var sgPerformer = "";
+    var lon = 0;
+    var lat = 0;
 
 }
 
@@ -182,9 +180,11 @@ function querySeatGeek(){
             'q': sgQ,
             'client_id': sgId,
             'client_secret': sgKey,
-            'performers.slug': sgPerformer
-         //   'lat': lat,
-          //  'lon': lon
+            'performers.slug': sgPerformer,
+            'lat': lat,
+            'lon': lon,
+          // 'geoip': true,
+           // 'range': '200mi'
         });
 } else {
     url += '&' + $.param({
@@ -250,14 +250,7 @@ function querySeatGeek(){
 
             
 
-            // get the performers
-            for(j = 0; j < results[i].performers.length; j++){
-                var performer = results[i].performers[j].name
-                // create a btn-link for each performer, set its text to the performer name
-                var performerBtn = $('<button class="btn btn-link performerBtn">').text(performer);
-                // append each performer button to the performersDiv
-                performersDiv.append(performerBtn);
-            };
+            
 
             // assign the event results to variables
             var eventId = results[i].id;
@@ -277,14 +270,23 @@ function querySeatGeek(){
             var formattedDateTime = moment(results[i].datetime_local).format("dddd, MMMM Do YYYY, [at] h:mm a")
             var formattedAddress = venueStreet + "<br>" + venueCityandState + "<br>" + venueZip
             
-            
+            // get the performers
+            for(j = 0; j < results[i].performers.length; j++){
+                var performer = results[i].performers[j].name
+                // create a btn-link for each performer, set its text to the performer name
+                var performerBtn = $('<button class="btn btn-link performerBtn">')
+                                    .text(performer)
+                                    .attr("event-id", eventId)
+                                    .appendTo(performersDiv);
+                
+            };
 
             // Set the title of the result panel
             panelTitle.html(date + " - " + title) //.append(btnFavorite) panelHeading.append(
             // append the formatted date/time to whenDiv
             whenDiv.append(formattedDateTime)
             // set the event-id for the button
-            performerBtn.attr("event-id", eventId)
+           // performerBtn.attr("event-id", eventId)
             //TODO: get venue rating from yelp?
             // append all the venue stuff plus the whenDiv to the venue panel
             venueDiv.append(venueName, formattedAddress, whenDiv);
@@ -414,40 +416,6 @@ function checkUserStatus(){
 }
 
 
-function checkFirstTimeUser(){
-    
-    ref.child(currentUid).once('value', function(snapshot){
-        console.log(currentUid)
-        if(snapshot.val() === null){
-            var userData = firebase.auth().currentUser;
-            console.log(userData)
-         /*  var currentFavorites = '';
-           if(favorites.length > 0){
-               currentFavorites = favorites; 
-           }*/
-           ref.child(currentUid).update({
-               name: userData.displayName,
-               email: userData.email,
-               emailverified: userData.emailVerified,
-               photoUrl: userData.photoURL,
-               providerId: userData.providerData[0].providerId,
-               providerUid: userData.providerData[0].uid,
-               favorites: favorites
-           })
-           
-        } else { 
-            if(snapshot.val().favorites){
-                console.log(snapshot.val().favorites)
-                var dbFavorites = snapshot.val().favorites
-                favorites = combineArrays(favorites.concat(dbFavorites))
-            }
-            ref.child(currentUid).update({favorites: favorites})
-
-        }
-    })
-    
-}
-
 function updateUser(){
     var userData = firebase.auth().currentUser;
     ref.child(currentUid).update({
@@ -459,6 +427,7 @@ function updateUser(){
         providerUid: userData.providerData[0].uid,
     }).then(function(){
         ref.child(currentUid).once('value', function(snapshot){
+            userPhoto = snapshot.val().photoUrl
             if(snapshot.val().favorites){
                 var dbFavorites = snapshot.val().favorites
                 favorites = combineArrays(favorites.concat(dbFavorites))
@@ -469,18 +438,6 @@ function updateUser(){
 }
 
 
-function syncFavorites(){
-    if(signedIn){
-    ref.child(currentUid).once('value', function(snapshot){
-        var dbFavorites = snapshot.val().favorites
-        favorites = combineArrays(favorites.concat(dbFavorites))
-    })
-
-    if(favorites.length > 0){
-        ref.child(currentUid).child('favorites').set(favorites)
-    }
-}
-}
 
 
 
@@ -504,8 +461,38 @@ function combineArrays(array){
 function updateLoginBtn(){
     if(signedIn){
         $('#btnLogin').html("Sign Out")
+        $('<img src="' + userPhoto +'">').appendTo('#btnLogin')
+
     } else {
         $('#btnLogin').html("Sign In")
+    }
+}
+
+
+function toggleDisplay(){
+    if(displayFavorites){
+        $('#navFavorites').addClass("active")
+        $('#navHome').removeClass("active")
+        $('#results').empty();
+        if(favorites.length > 0){
+            querySeatGeek();
+        }
+        if(!signedIn){
+        var message = '<h3><center><a href="#" data-toggle="modal" data-target="#loginModal">Sign In</a> to Save Your Favorites!</center></h3>'
+        var signInPanel = $('<div class="panel panel-default">').appendTo('#signin')
+        var signInBody = $('<div class="panel-body">').html(message).appendTo(signInPanel)
+        } else {
+            $('#signin').empty();
+        }
+    } else {
+        $('#navFavorites').removeClass("active")
+        $('#navHome').addClass("active")
+        $('#signin').empty();
+        if(sgQ.length === 0){
+            $('#results').empty;
+        } else{
+        querySeatGeek();
+        }
     }
 }
 
