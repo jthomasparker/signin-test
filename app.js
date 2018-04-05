@@ -421,10 +421,10 @@ function checkFirstTimeUser(){
         if(snapshot.val() === null){
             var userData = firebase.auth().currentUser;
             console.log(userData)
-           var currentFavorites = '';
+         /*  var currentFavorites = '';
            if(favorites.length > 0){
-               currentFavorites = favorites;
-           }
+               currentFavorites = favorites; 
+           }*/
            ref.child(currentUid).update({
                name: userData.displayName,
                email: userData.email,
@@ -432,12 +432,14 @@ function checkFirstTimeUser(){
                photoUrl: userData.photoURL,
                providerId: userData.providerData[0].providerId,
                providerUid: userData.providerData[0].uid,
-               favorites: currentFavorites
+               favorites: favorites
            })
            
         } else { 
+            if(snapshot.val().favorites !== null){
             var dbFavorites = snapshot.val().favorites
             favorites = combineArrays(favorites.concat(dbFavorites))
+            }
             ref.child(currentUid).update({favorites: favorites})
 
         }
