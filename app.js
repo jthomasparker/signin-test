@@ -62,6 +62,7 @@ firebase.auth().onAuthStateChanged(function(user) {
      
    } else {
        signedIn = false;
+       signinRefused = false;
        currentUid = null;
        console.log(signedIn)
    }
@@ -122,7 +123,7 @@ firebase.auth().onAuthStateChanged(function(user) {
 
     $('#btnLogin').on('click', function(){
         if(signedIn){
-            syncFavorites();
+           // syncFavorites();
             firebase.auth().signOut();
         } else {
             $('#loginModal').modal();
@@ -151,7 +152,9 @@ firebase.auth().onAuthStateChanged(function(user) {
             }
         }
         updateFavoriteBtn(thisBtn)
-        syncFavorites();
+        if(signedIn){
+            ref.child(currentUid).update({favorites: favorites})
+        }
     })
 
     $('.cancelLogin').on('click', function(){
@@ -418,7 +421,10 @@ function checkFirstTimeUser(){
         if(snapshot.val() === null){
             var userData = firebase.auth().currentUser;
             console.log(userData)
-           // ref.child('testuser3').child('favorites').set("it worked")
+           var currentFavorites = '';
+           if(favorites.length > 0){
+               currentFavorites = favorites;
+           }
            ref.child(currentUid).set({
                name: userData.displayName,
                email: userData.email,
@@ -426,11 +432,14 @@ function checkFirstTimeUser(){
                photoUrl: userData.photoURL,
                providerId: userData.providerData[0].providerId,
                providerUid: userData.providerData[0].uid,
-               favorites: ''
+               favorites: currentFavorites
            })
            
+        } else { 
+            var dbFavorites = snapshot.val().favorites
+            favorites = combineArrays(favorites.concat(dbFavorites))
+
         }
-        syncFavorites();
     })
     
 }
