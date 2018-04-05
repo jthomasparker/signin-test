@@ -436,9 +436,10 @@ function checkFirstTimeUser(){
            })
            
         } else { 
-            if(snapshot.val().favorites !== null){
-            var dbFavorites = snapshot.val().favorites
-            favorites = combineArrays(favorites.concat(dbFavorites))
+            if(snapshot.val().favorites){
+                console.log(snapshot.val().favorites)
+                var dbFavorites = snapshot.val().favorites
+                favorites = combineArrays(favorites.concat(dbFavorites))
             }
             ref.child(currentUid).update({favorites: favorites})
 
