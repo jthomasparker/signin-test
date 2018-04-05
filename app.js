@@ -448,6 +448,26 @@ function checkFirstTimeUser(){
     
 }
 
+function updateUser(){
+    var userData = firebase.auth().currentUser;
+    ref.child(currentUid).update({
+        name: userData.displayName,
+        email: userData.email,
+        emailverified: userData.emailVerified,
+        photoUrl: userData.photoURL,
+        providerId: userData.providerData[0].providerId,
+        providerUid: userData.providerData[0].uid,
+    }).then(function(){
+        ref.child(currentUid).once('value', function(snapshot){
+            if(snapshot.val().favorites){
+                var dbFavorites = snapshot.val().favorites
+                favorites = combineArrays(favorites.concat(dbFavorites))
+            }
+            ref.child(currentUid).update({favorites: favorites})
+        })
+    })   
+}
+
 
 function syncFavorites(){
     if(signedIn){
