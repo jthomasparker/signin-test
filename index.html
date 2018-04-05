@@ -38,16 +38,15 @@
                       <div class="form-group">
                         <input type="text" class="form-control" placeholder="Search" id="search">
                       </div>
-                      <button type="submit" class="btn btn-default-right" id="btnSearch">Search</button>
-                      <button type="submit" class="btn btn-default-right locationBtn">Find near me</button>
+                      <button type="button" class="btn btn-default-right" id="btnSearch">Search</button>
+                      <button type="button" class="btn btn-default-right locationBtn">Find near me</button>
                     </form>
                     <ul class="nav navbar-nav navbar-right">
-                      <!--  <li id="btnLogin" data-toggle="modal" data-target="#myModal"><a href="#">Sign In</a></li> -->
                       <li><a href="#" id="btnLogin"></a></li>
                     </ul>
                   </div>
                 </div>
-              </nav>
+        </nav>
 
     <div class="container">
         <div class="row">
@@ -56,46 +55,36 @@
                 <div id="results"></div>
                
                 <div id="loginModal"  class="modal fade" role="dialog">
-                        <div class="modal-dialog">
-                      
-                          <!-- Modal content-->
-                          <div class="modal-content"> 
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content"> 
                             <div class="modal-header">
-                              <button type="button" class="close cancelLogin" data-dismiss="modal">&times;</button>
-                              <h4 class="modal-title">Sign In to Save Favorites!</h4>
+                                <button type="button" class="close cancelLogin" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Sign In to Save Favorites!</h4>
                             </div>
                             <div class="modal-body" id="firebaseui-auth-container">
-                                    <script type="text/javascript">  
-                                        var uiConfig = {  
-                                         signInSuccessUrl: 'index.html',  
-                                         signInOptions: [  
-                                          // Specify providers you want to offer your users.  
-                                          firebase.auth.GoogleAuthProvider.PROVIDER_ID,  
-                                          firebase.auth.EmailAuthProvider.PROVIDER_ID  
-                                         ],  
-                                         // Terms of service url can be specified and will show up in the widget.  
-                                         tosUrl: '<your-tos-url>'  
-                                        };  
-                                        // Initialize the FirebaseUI Widget using Firebase.  
-                                        var ui = new firebaseui.auth.AuthUI(firebase.auth());  
-                                        // The start method will wait until the DOM is loaded.  
-                                        ui.start('#firebaseui-auth-container', uiConfig);  
-                                     </script> 
-                                <!--
-                                    <div class="embed-responsive embed-responsive-16by9">
-                                         <iframe class="embed-responsive-item" src="signIn.html"></iframe>
-                                    </div>
-                                -->
-                              
+                                <script type="text/javascript">  
+                                    var uiConfig = {  
+                                        signInSuccessUrl: 'index.html',  
+                                        signInOptions: [  
+                                            // providers  
+                                            firebase.auth.GoogleAuthProvider.PROVIDER_ID,  
+                                            firebase.auth.EmailAuthProvider.PROVIDER_ID  
+                                        ],  
+                                        // TODO: add terms of service url  
+                                        tosUrl: '<your-tos-url>'  
+                                    };  
+                                        // InitializeFirebaseUI Widget 
+                                    var ui = new firebaseui.auth.AuthUI(firebase.auth());  
+                                    ui.start('#firebaseui-auth-container', uiConfig);  
+                                </script> 
                             </div>
                             <div class="modal-footer">
-                              <button type="button" id="cancel" class="btn btn-default cancelLogin" data-dismiss="modal">Cancel</button>
+                                <button type="button" id="cancel" class="btn btn-default cancelLogin" data-dismiss="modal">Cancel</button>
                             </div>
-                          </div>
-                      
                         </div>
-                      </div>
-                <ul class="pagination"></ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -108,8 +97,8 @@
         <li><a href="#" id="#btn4">4</a></li>
         <li><a href="#" id="#btn5">5</a></li>
         <li><a href="#">&raquo;</a></li>
-      </ul>
-      </div>
+    </ul>
+    </div>
     
 </body>
 </html>
