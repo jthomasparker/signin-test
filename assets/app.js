@@ -43,6 +43,11 @@ ref.on('value', function(snapshot){
     }
 })
 
+$('#btn2').on('click', function(){
+    page = 2;
+    querySeatGeek()
+})
+
 
 
 //checkUser();
@@ -129,9 +134,7 @@ firebase.auth().onAuthStateChanged(function(user) {
         var thisBtn = $(this)
         var eventId = $(this).attr("event-id")
         
-        if((!signedIn)&&(!signinRefused)){
-            $('#loginModal').modal();
-        }
+        
         if(favorites.indexOf(eventId) < 0){
             favorites.push(eventId)
         } else {
@@ -148,6 +151,9 @@ firebase.auth().onAuthStateChanged(function(user) {
         updateFavoriteBtn(thisBtn)
         if(signedIn){
             ref.child(currentUid).update({favorites: favorites})
+        }
+        if((!signedIn)&&(!signinRefused)){
+            $('#loginModal').modal();
         }
     })
 
@@ -438,15 +444,15 @@ function combineArrays(array){
 // updates the "login/out" button based on user status
 function updateLoginBtn(){
     if(signedIn){
-        
-        var userPhoto = firebase.auth().currentUser.photoURL;
         $('#btnLogin').html("Sign Out")
+        if(firebase.auth().currentUser.providerId === "google.com"){
+        var userPhoto = firebase.auth().currentUser.photoURL;
         $('#profilePic').html('<img src="' + userPhoto +'" class="img-circle img-responsive" width="40" height="auto">')
-      //  $('<img src="' + userPhoto +'" class="img-circle img-responsive" width="40" height="auto">').appendTo('#btnLogin')
-        
+        }
 
     } else {
         $('#btnLogin').html("Sign In")
+        $('#profilePic').empty();
     }
 }
 
